@@ -1,18 +1,34 @@
-ssl_certificate /etc/ssl/certs/sgp1.jcharante.com.pem;
-ssl_certificate_key /etc/ssl/private/sgp1.jcharante.com.key;
-
 server {
-	listen 80;
-	server_name *.sgp1.jcharante.com;
-	return 301 https://$host$request_uri;
+    listen 80;
+
+    server_name _;
+
+    return 301 https://$host$request_uri;
 }
 
 server {
 	listen 443 ssl;
+	listen [::]:443;
+	server_name test.sgp1.jcharante.com;
+	ssl_certificate /etc/ssl/certs/fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/privkey.pem;
+	ssl on;
+	
+	location / {
+		return 200 "greetings from sgp1-proxy at test.sgp1.jcharante.com";
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443;
 	server_name vta-b.sgp1.jcharante.com;
+	ssl_certificate /etc/ssl/certs/fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/privkey.pem;
 	ssl on;
 	
 	location / {
 		proxy_pass http://172.18.0.1:3100;
+		proxy_buffering off;
 	}
 }
