@@ -89,3 +89,17 @@ server {
 		proxy_buffering off;
 	}
 }
+
+server {
+	listen 443 ssl;
+	listen [::]:443;
+	server_name vesicle-dynamics.jcharante.com;
+	ssl_certificate /etc/ssl/certs/jcharante.com.fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/jcharante.com.privkey.pem;
+	ssl on;
+
+	location / {
+		proxy_pass http://172.18.0.1:3200;
+		proxy_buffering off;
+	}
+}
