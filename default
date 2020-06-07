@@ -71,6 +71,19 @@ server {
 	ssl on;
 
 	location / {
+	    # Simple requests
+        if ($request_method ~* "(GET|POST)") {
+          add_header "Access-Control-Allow-Origin"  *;
+        }
+
+        # Preflighted requests
+        if ($request_method = OPTIONS ) {
+          add_header "Access-Control-Allow-Origin"  *;
+          add_header "Access-Control-Allow-Methods" "GET, POST, OPTIONS, HEAD";
+          add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
+          return 204;
+        }
+
 		proxy_pass http://172.18.0.1:3100;
 		proxy_buffering off;
 	}
