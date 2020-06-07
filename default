@@ -9,6 +9,34 @@ server {
 server {
 	listen 443 ssl;
 	listen [::]:443;
+	server_name test-sgp1.jcharante.com;
+	ssl_certificate /etc/ssl/certs/jcharante.com.fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/jcharante.com.privkey.pem;
+	ssl on;
+	
+	location / {
+		return 200 "greetings from sgp1-proxy at test-sgp1.jcharante.com";
+		add_header Content-Type text/html;
+	}
+}
+
+server {
+	listen 443 ssl default_server;
+	listen [::]:443;
+	server_name sgp1.jcharante.com;
+	ssl_certificate /etc/ssl/certs/jcharante.com.fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/jcharante.com.privkey.pem;
+	ssl on;
+	
+	location / {
+		return 200 "greetings from sgp1-proxy at sgp1.jcharante.com";
+		add_header Content-Type text/html;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443;
 	server_name test.sgp1.jcharante.com;
 	ssl_certificate /etc/ssl/certs/fullchain.pem;
 	ssl_certificate_key /etc/ssl/private/privkey.pem;
@@ -16,6 +44,7 @@ server {
 	
 	location / {
 		return 200 "greetings from sgp1-proxy at test.sgp1.jcharante.com";
+		add_header Content-Type text/html;
 	}
 }
 
@@ -25,6 +54,20 @@ server {
 	server_name vta-b.sgp1.jcharante.com;
 	ssl_certificate /etc/ssl/certs/fullchain.pem;
 	ssl_certificate_key /etc/ssl/private/privkey.pem;
+	ssl on;
+	
+	location / {
+		proxy_pass http://172.18.0.1:3100;
+		proxy_buffering off;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443;
+	server_name vta-b.jcharante.com;
+	ssl_certificate /etc/ssl/certs/jcharante.com.fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/jcharante.com.privkey.pem;
 	ssl on;
 	
 	location / {

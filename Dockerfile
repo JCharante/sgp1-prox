@@ -6,8 +6,12 @@ FROM nginx:alpine
 
 # WORKDIR /usr/src/sgp1-prox
 
-COPY fullchain.pem /etc/ssl/certs/
 COPY origin_ca_rsa_root.pem /etc/ssl/certs/
+
+COPY jcharante.com.fullchain.pem /etc/ssl/certs/
+COPY jcharante.com.privkey.pem /etc/ssl/private/
+
+COPY fullchain.pem /etc/ssl/certs/
 COPY privkey.pem /etc/ssl/private/
 
 #COPY default /etc/nginx/sites-enabled/default
