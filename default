@@ -1,5 +1,5 @@
 server {
-    listen 80;
+    listen 80 default_server;
 
     server_name _;
 
@@ -21,7 +21,7 @@ server {
 }
 
 server {
-	listen 443 ssl default_server;
+	listen 443 ssl;
 	listen [::]:443;
 	server_name sgp1.jcharante.com;
 	ssl_certificate /etc/ssl/certs/jcharante.com.fullchain.pem;
@@ -34,30 +34,59 @@ server {
 	}
 }
 
+#server {
+#	listen 443 ssl;
+#	listen [::]:443;
+#	server_name test.sgp1.jcharante.com;
+#	ssl_certificate /etc/ssl/certs/fullchain.pem;
+#	ssl_certificate_key /etc/ssl/private/privkey.pem;
+#	ssl on;
+#
+#	location / {
+#		return 200 "greetings from sgp1-proxy at test.sgp1.jcharante.com";
+#		add_header Content-Type text/html;
+#	}
+#}
+
+#server {
+#	listen 443 ssl;
+#	listen [::]:443;
+#	server_name vta-b.sgp1.jcharante.com;
+#	ssl_certificate /etc/ssl/certs/fullchain.pem;
+#	ssl_certificate_key /etc/ssl/private/privkey.pem;
+#	ssl on;
+#
+#	location / {
+#		proxy_pass http://172.18.0.1:3100;
+#		proxy_buffering off;
+#	}
+#}
+
 server {
 	listen 443 ssl;
 	listen [::]:443;
-	server_name test.sgp1.jcharante.com;
-	ssl_certificate /etc/ssl/certs/fullchain.pem;
-	ssl_certificate_key /etc/ssl/private/privkey.pem;
+	server_name api.yourfinalgrade.com;
+	ssl_certificate /etc/ssl/certs/yourfinalgrade.com.fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/yourfinalgrade.com.privkey.pem;
 	ssl on;
 
 	location / {
-		return 200 "greetings from sgp1-proxy at test.sgp1.jcharante.com";
-		add_header Content-Type text/html;
-	}
-}
+	    # Simple requests
+        if ($request_method ~* "(GET|POST)") {
+          add_header "Access-Control-Allow-Origin"  *;
+        }
 
-server {
-	listen 443 ssl;
-	listen [::]:443;
-	server_name vta-b.sgp1.jcharante.com;
-	ssl_certificate /etc/ssl/certs/fullchain.pem;
-	ssl_certificate_key /etc/ssl/private/privkey.pem;
-	ssl on;
+        # Preflighted requests
+        if ($request_method = OPTIONS ) {
+          add_header "Access-Control-Allow-Origin"  *;
+          add_header "Access-Control-Allow-Methods" "GET, POST, OPTIONS, HEAD";
+          add_header "Access-Control-Allow-Headers" "Authorization, Origin, X-Requested-With, Content-Type, Accept";
+          return 204;
+        }
 
-	location / {
-		proxy_pass http://172.18.0.1:3100;
+        #add_header Content-Type text/html;
+        #return 200 "api.yourfinalgrade.com hosted by sgp1-prox";
+		proxy_pass http://172.18.0.1:3001;
 		proxy_buffering off;
 	}
 }
@@ -155,6 +184,22 @@ server {
 
 	location / {
 		proxy_pass http://172.18.0.1:3301;
+		proxy_buffering off;
+	}
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443;
+	server_name jyanz.com;
+	ssl_certificate /etc/ssl/certs/jyanz.com.fullchain.pem;
+	ssl_certificate_key /etc/ssl/private/jyanz.com.privkey.pem;
+	ssl on;
+
+	location / {
+	    #return 200 "jyanz.com hosted by sgp1-prox";
+        #add_header Content-Type text/html;
+		proxy_pass http://172.18.0.1:3401;
 		proxy_buffering off;
 	}
 }
